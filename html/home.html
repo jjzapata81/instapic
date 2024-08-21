@@ -73,6 +73,22 @@
       </ul>
       <p>&copy; 2024 InstaPIC Company</p>
     </footer>
+    <script>
+      // Función para obtener el valor de un parámetro en la query string
+      function getQueryParam(param) {
+          const urlParams = new URLSearchParams(window.location.search);
+          return urlParams.get(param);
+      }
 
+      // Recupera el userName de la URL
+      const userName = getQueryParam('userName');
+
+      // Si el userName está disponible, lo muestra en la página
+      if (userName) {
+          document.getElementById('userName').textContent = `${userName}!`;
+      } else {
+          document.getElementById('userName').textContent = 'Bienvenido!';
+      }
+  </script>
   </body>
 </html>
