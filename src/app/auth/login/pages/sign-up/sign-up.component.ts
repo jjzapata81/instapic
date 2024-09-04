@@ -1,13 +1,48 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, ReactiveFormsModule],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.css'
 })
 export class SignUpComponent {
+
+  signUpForm = this.fb.group({
+    email: [''],
+    userName:['', [Validators.required, Validators.minLength(8), Validators.maxLength(12)]],
+    password:['', [Validators.required, Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$')]],
+    rePassword: ['']
+  });
+
+  constructor(private fb: FormBuilder, private router: Router, private userService:UserService) {
+
+  }
+
+  onResgister() {
+    if (!this.signUpForm.valid) {
+      alert('Diligencie todos los campos');
+      return;
+    }
+    let userName = this.signUpForm.value.userName || '';
+    let password = this.signUpForm.value.password || '';
+    let rePassword = this.signUpForm.value.rePassword || '';
+    if (rePassword !== password) {
+      alert('Las constraseñas no coinciden');
+      return;
+    }
+
+
+    let response = this.userService.register({userName, password, login:true})
+    alert(response.message);
+    if(response.success){
+      this.router.navigateByUrl('/home');
+    }
+
+  }
 
 }
