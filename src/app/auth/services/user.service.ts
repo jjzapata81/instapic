@@ -44,6 +44,7 @@ export class UserService {
         message: 'Usuario ya existe'
       }
     }
+    localStorage.setItem(user.userName.toLowerCase().trim(), user.password);
     this.setUser(user);
     return {
       success: true,
