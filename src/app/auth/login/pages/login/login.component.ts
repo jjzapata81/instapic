@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../../const/shared.modules';
-import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +18,7 @@ export class LoginComponent {
     password:['', [Validators.required, Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$')]]
   })
 
-  constructor(private fb:FormBuilder, private router: Router, private userService: UserService){
+  constructor(private fb:FormBuilder, private router: Router){
 
   }
 
@@ -33,12 +32,13 @@ export class LoginComponent {
     let userName = this.loginForm.value.userName||'';
     let password = this.loginForm.value.password||'';
 
-    let response = this.userService.login(userName, password);
-    alert(response.message);
-    if(response.success){
-      this.router.navigateByUrl('/home');
-    }
+    const storedPassword = localStorage.getItem(userName.toLowerCase().trim());
 
+    if (storedPassword === null || storedPassword !== password) {
+      alert('Usuario o contraseña incorrectos');
+      return;
+    }
+    this.router.navigateByUrl('/home');
   }
 
 }

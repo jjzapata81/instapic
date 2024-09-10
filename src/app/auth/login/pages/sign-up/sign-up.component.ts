@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -19,7 +18,7 @@ export class SignUpComponent {
     rePassword: ['']
   });
 
-  constructor(private fb: FormBuilder, private router: Router, private userService:UserService) {
+  constructor(private fb: FormBuilder, private router: Router) {
 
   }
 
@@ -36,13 +35,13 @@ export class SignUpComponent {
       return;
     }
 
-
-    let response = this.userService.register({userName, password, login:true})
-    alert(response.message);
-    if(response.success){
-      this.router.navigateByUrl('/home');
+    if (localStorage.getItem(userName.toLowerCase().trim())) {
+      alert('Usuario ya existe');
+      return;
     }
 
+    localStorage.setItem(userName.toLowerCase().trim(), password);
+    this.router.navigateByUrl('/home');
   }
 
 }
