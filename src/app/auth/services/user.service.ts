@@ -1,26 +1,13 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { User } from '../interfaces/user.interface';
+import { LoginResponse, SignUpResponse } from '../interfaces/login-response.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  private userSignal = signal<User | null>(null);
-
-  get user() {
-    return this.userSignal;
-  }
-
-  setUser(user: User) {
-    this.userSignal.set(user);
-  }
-
-  clearUser() {
-    this.userSignal.set(null);
-  }
-
-  login(userName: string, password: string) {
+  login(userName: string, password: string) :LoginResponse{
     const storedPassword = localStorage.getItem(userName.toLowerCase().trim());
 
     if (storedPassword === null || storedPassword !== password) {
@@ -29,15 +16,13 @@ export class UserService {
         message: 'Usuario o contraseña incorrectos'
       }
     }
-    this.setUser({userName, password, login:true});
     return {
-      success: true,
-      message: 'Ingreso exitoso'
+      success: true
     }
 
   }
 
-  register(user:User){
+  register(user:User): SignUpResponse{
     if (localStorage.getItem(user.userName.toLowerCase().trim())) {
       return {
         success: false,
@@ -45,10 +30,8 @@ export class UserService {
       }
     }
     localStorage.setItem(user.userName.toLowerCase().trim(), user.password);
-    this.setUser(user);
     return {
-      success: true,
-      message: 'Ingreso exitoso'
+      success: true
     }
   }
 }

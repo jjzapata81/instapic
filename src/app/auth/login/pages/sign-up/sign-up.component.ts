@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { UserService } from '../../../services/user.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-sign-up',
@@ -25,22 +26,35 @@ export class SignUpComponent {
 
   onResgister() {
     if (!this.signUpForm.valid) {
-      alert('Diligencie todos los campos');
+      Swal.fire({
+        title:'Registro',
+        text:'Debe diligenciar todos los campos',
+        icon:'error'
+      })
       return;
     }
     let userName = this.signUpForm.value.userName || '';
     let password = this.signUpForm.value.password || '';
     let rePassword = this.signUpForm.value.rePassword || '';
     if (rePassword !== password) {
-      alert('Las constraseñas no coinciden');
+      Swal.fire({
+        title:'Registro',
+        text:'Las constraseñas no coinciden',
+        icon:'error'
+      })
       return;
     }
 
 
     let response = this.userService.register({userName, password, login:true})
-    alert(response.message);
     if(response.success){
       this.router.navigateByUrl('/home');
+    }else{
+      Swal.fire({
+        title:'Registro',
+        text:response.message,
+        icon:'error'
+      })
     }
 
   }
