@@ -10,7 +10,7 @@ export class UserService {
   login(userName: string, password: string) :LoginResponse{
     const storedPassword = localStorage.getItem(userName.toLowerCase().trim());
 
-    if (storedPassword === null || storedPassword !== password) {
+    if (storedPassword !== password) {
       return {
         success: false,
         message: 'Usuario o contraseña incorrectos'

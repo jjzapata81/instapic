@@ -16,7 +16,7 @@ export class SignUpComponent {
   signUpForm = this.fb.group({
     email: [''],
     userName:['', [Validators.required, Validators.minLength(8), Validators.maxLength(12)]],
-    password:['', [Validators.required, Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$')]],
+    password:['', [Validators.required]],
     rePassword: ['']
   });
 
@@ -27,18 +27,17 @@ export class SignUpComponent {
   onResgister() {
     if (!this.signUpForm.valid) {
       Swal.fire({
-        title:'Registro',
         text:'Debe diligenciar todos los campos',
         icon:'error'
       })
       return;
     }
     let userName = this.signUpForm.value.userName || '';
+    let email = this.signUpForm.value.email || '';
     let password = this.signUpForm.value.password || '';
     let rePassword = this.signUpForm.value.rePassword || '';
     if (rePassword !== password) {
       Swal.fire({
-        title:'Registro',
         text:'Las constraseñas no coinciden',
         icon:'error'
       })
@@ -46,12 +45,11 @@ export class SignUpComponent {
     }
 
 
-    let response = this.userService.register({userName, password, login:true})
+    let response = this.userService.register({userName, password, email})
     if(response.success){
       this.router.navigateByUrl('/home');
     }else{
       Swal.fire({
-        title:'Registro',
         text:response.message,
         icon:'error'
       })
