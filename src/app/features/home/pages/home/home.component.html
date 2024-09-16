@@ -1,32 +1,30 @@
 <section id="profile">
   <div>
     <img src="/assets/batman_avatar.webp" />
-    <span id="userName">jjzapata</span>
+    <span id="userName">{{user().email}}</span>
   </div>
   <div>
     <span>
-      10
+      {{posts()}}
     </span>
     <span>Publicaciones</span>
   </div>
   <div>
-    <span>5</span>
+    <span>{{followers}}</span>
     <span>Seguidores</span>
   </div>
   <div>
-    <span>150</span>
+    <span>{{requests}}</span>
     <span>Solicitudes</span>
   </div>
 </section>
 <section id="gallery">
-  <img src="/assets/gallery0.jpg" />
-  <img src="/assets/gallery1.jpg" />
-  <img src="/assets/gallery2.webp" />
-  <img src="/assets/gallery3.jpeg" />
-  <img src="/assets/gallery4.jpg" />
-  <img src="/assets/gallery5.jpg" />
-  <img src="/assets/gallery6.jpg" />
-  <img src="/assets/gallery7.jpg" />
-  <img src="/assets/gallery8.webp" />
-  <img src="/assets/gallery9.avif" />
+  <div class="gallery-item" *ngFor="let item of galleryItems()">
+    <img [src]="item.url" />
+    <div class="comments">
+      <input type="text" (change)="onAddComment($event, item.id)"/>
+      <a (click)="onComment(item.comments)"><i class="fas fa-comments"></i></a>
+      <a (click)="onDelete(item.id)"><i class="fas fa-trash-alt"></i></a>
+    </div>
+  </div>
 </section>

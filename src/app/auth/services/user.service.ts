@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Signal, signal } from '@angular/core';
 import { User } from '../interfaces/user.interface';
 import { LoginResponse, SignUpResponse } from '../interfaces/login-response.interface';
 
@@ -7,15 +7,25 @@ import { LoginResponse, SignUpResponse } from '../interfaces/login-response.inte
 })
 export class UserService {
 
-  login(userName: string, password: string) :LoginResponse{
-    const storedPassword = localStorage.getItem(userName.toLowerCase().trim());
 
-    if (storedPassword !== password) {
+  userSignal = signal<User>({userName:'', password:'', email:''});
+
+  login(userName: string, password: string) :LoginResponse{
+    const userSrt = localStorage.getItem(userName.toLowerCase().trim());
+    if(!userSrt){
       return {
         success: false,
         message: 'Usuario o contraseña incorrectos'
       }
     }
+    const user:User = JSON.parse(userSrt);
+    if (user.password !== password) {
+      return {
+        success: false,
+        message: 'Usuario o contraseña incorrectos'
+      }
+    }
+    this.setUser(user);
     return {
       success: true
     }
@@ -29,9 +39,26 @@ export class UserService {
         message: 'Usuario ya existe'
       }
     }
-    localStorage.setItem(user.userName.toLowerCase().trim(), user.password);
+    const userSrt = JSON.stringify(user);
+    localStorage.setItem(user.userName.toLowerCase().trim(), userSrt);
+    this.setUser(user);
     return {
       success: true
     }
   }
+
+  private setUser(user:User){
+    localStorage.setItem('loggedUser', JSON.stringify(user));
+    this.userSignal.set(user);
+  }
+
+  getUser(){
+    const userSrt = localStorage.getItem('loggedUser');
+    if(userSrt){
+      const user = JSON.parse(userSrt);
+      this.userSignal.set(user);
+    }
+    return this.userSignal;
+  }
+
 }
