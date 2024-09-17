@@ -1,6 +1,7 @@
-import { Injectable, Signal, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { User } from '../interfaces/user.interface';
 import { LoginResponse, SignUpResponse } from '../interfaces/login-response.interface';
+import { GalleryItem } from '../../features/home/interfaces/gallery-item.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,39 @@ export class UserService {
       success: true
     }
 
+  }
+
+  logout(){
+    localStorage.removeItem('loggedUser');
+    this.userSignal.set({userName:'', password:'', email:''});
+  }
+
+  saveImage(id:string, url:string, userName:string){
+    const newImage:GalleryItem = {
+      id,
+      url,
+      comments:[]
+    }
+    let galleryStr = localStorage.getItem(`imgs-${userName}`);
+    if(galleryStr){
+      let gallery = JSON.parse(galleryStr);
+      gallery = [...gallery, newImage];
+      localStorage.setItem(`imgs-${userName}`, JSON.stringify(gallery));
+    }else{
+      localStorage.setItem(`imgs-${userName}`,JSON.stringify([newImage]));
+    }
+  }
+
+  getGallery(userName:string):GalleryItem[]{
+    let galleryStr = localStorage.getItem(`imgs-${userName}`);
+    if(galleryStr){
+      return JSON.parse(galleryStr);
+    }
+    return [];
+  }
+
+  updateGallery(userName:string, gallery:GalleryItem[]){
+    localStorage.setItem(`imgs-${userName}`, JSON.stringify(gallery));
   }
 
   register(user:User): SignUpResponse{

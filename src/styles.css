@@ -120,12 +120,10 @@ ul li:first-child {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 80%;
 }
 
 #profile img{
   width: 100px;
-  display: block;
   border-radius: 50px;
 }
 

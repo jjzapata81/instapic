@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import Swal from 'sweetalert2';
 import { UserService } from '../../../../auth/services/user.service';
+import { GalleryItem } from '../../interfaces/gallery-item.interface';
 
 @Component({
   selector: 'app-home',
@@ -12,69 +13,15 @@ import { UserService } from '../../../../auth/services/user.service';
 })
 export class HomeComponent {
 
-  posts = signal(10);
-
   followers = 5;
-
   requests = 150;
-
-  galleryItems = signal([
-    {
-      id: 1,
-      url: '/assets/gallery0.jpg',
-      comments: ['Hola', 'Bien']
-    },
-    {
-      id: 2,
-      url: '/assets/gallery1.jpg',
-      comments: ['Hola', 'Bien']
-    },
-    {
-      id: 3,
-      url: '/assets/gallery2.webp',
-      comments: []
-    },
-    {
-      id: 4,
-      url: '/assets/gallery3.jpeg',
-      comments: []
-    },
-    {
-      id: 5,
-      url: '/assets/gallery4.jpg',
-      comments: []
-    },
-    {
-      id: 6,
-      url: '/assets/gallery5.jpg',
-      comments: []
-    },
-    {
-      id: 7,
-      url: '/assets/gallery6.jpg',
-      comments: []
-    },
-    {
-      id: 8,
-      url: '/assets/gallery7.jpg',
-      comments: ['Hola', 'Bien']
-    },
-    {
-      id: 9,
-      url: '/assets/gallery8.webp',
-      comments: []
-    },
-    {
-      id: 10,
-      url: '/assets/gallery9.avif',
-      comments: []
-    }
-  ]);
+  galleryItems = signal<GalleryItem[]>([]);
 
   user;
 
   constructor(private userService: UserService){
     this.user = this.userService.getUser();
+    this.galleryItems.set(this.userService.getGallery(this.user().userName));
   }
 
 
@@ -93,7 +40,7 @@ export class HomeComponent {
     })
   }
 
-  onDelete(id: number) {
+  onDelete(id: string) {
     Swal.fire({
       text: "¿Está seguro de eliminar la imagen seleccionada?",
       icon: "warning",
@@ -108,13 +55,13 @@ export class HomeComponent {
         this.galleryItems.update(items =>
           items.filter(item => item.id !== id)
         );
-        this.posts.update(() => this.galleryItems().length);
+        this.userService.updateGallery(this.user().userName, this.galleryItems());
       }
     });
 
   }
 
-  onAddComment(event:Event, id:number){
+  onAddComment(event:Event, id:string){
     const input = event.target as HTMLInputElement;
     if(!input.value){
       return;
@@ -126,6 +73,7 @@ export class HomeComponent {
       }
       return items;
     })
+    this.userService.updateGallery(this.user().userName, this.galleryItems());
     input.value = '';
   }
 
