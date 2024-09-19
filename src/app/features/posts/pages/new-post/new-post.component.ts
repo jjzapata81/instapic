@@ -23,30 +23,40 @@ export class NewPostComponent {
   }
 
   onFileSelected(event:Event){
-    console.log(event);
-    Swal.fire({
-      title: 'Cargando...',
-      text: 'Por favor espera',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading(); // Muestra el indicador de carga
-      }
-    });
     let inputFile = event.target as HTMLInputElement;
     if(!inputFile.files || inputFile.files.length <= 0){
       return;
     }
     const file:File = inputFile.files[0];
     const fileName = uuidv4();
-    this.postsService.upload(file, fileName, this.user().userName).then(data=>{
-      this.uploadedUrl = data!;
-      this.userService.saveImage(fileName, this.uploadedUrl, this.user().userName);
-      Swal.close();
-      inputFile.value = '';
-    }).catch(()=>{
-      Swal.close();
-        Swal.fire('Error', 'Ocurrió un error al cargar los datos', 'error');
-    });
+    this.postsService.upload(file, fileName, this.user().userName)
+
   }
+
+  // onFileSelected(event:Event){
+  //   console.log(event);
+  //   Swal.fire({
+  //     title: 'Cargando...',
+  //     text: 'Por favor espera',
+  //     allowOutsideClick: false,
+  //     didOpen: () => {
+  //       Swal.showLoading();
+  //     }
+  //   });
+  //   let inputFile = event.target as HTMLInputElement;
+  //   if(!inputFile.files || inputFile.files.length <= 0){
+  //     return;
+  //   }
+  //   const file:File = inputFile.files[0];
+  //   const fileName = uuidv4();
+  //   this.postsService.upload(file, fileName, this.user().userName).then(data=>{
+  //     this.uploadedUrl = data!;
+  //     Swal.close();
+  //     inputFile.value = '';
+  //   }).catch(()=>{
+  //     Swal.close();
+  //       Swal.fire('Error', 'Ocurrió un error al cargar los datos', 'error');
+  //   });
+  // }
 
 }

@@ -15,13 +15,63 @@ export class HomeComponent {
 
   followers = 5;
   requests = 150;
-  galleryItems = signal<GalleryItem[]>([]);
+  galleryItems = signal([
+    {
+      id: 1,
+      url: '/assets/gallery0.jpg',
+      comments: ['Hola', 'Bien']
+    },
+    {
+      id: 2,
+      url: '/assets/gallery1.jpg',
+      comments: ['Hola', 'Bien']
+    },
+    {
+      id: 3,
+      url: '/assets/gallery2.webp',
+      comments: []
+    },
+    {
+      id: 4,
+      url: '/assets/gallery3.jpeg',
+      comments: []
+    },
+    {
+      id: 5,
+      url: '/assets/gallery4.jpg',
+      comments: []
+    },
+    {
+      id: 6,
+      url: '/assets/gallery5.jpg',
+      comments: []
+    },
+    {
+      id: 7,
+      url: '/assets/gallery6.jpg',
+      comments: []
+    },
+    {
+      id: 8,
+      url: '/assets/gallery7.jpg',
+      comments: ['Hola', 'Bien']
+    },
+    {
+      id: 9,
+      url: '/assets/gallery8.webp',
+      comments: []
+    },
+    {
+      id: 10,
+      url: '/assets/gallery9.avif',
+      comments: []
+    }
+  ]);
 
   user;
 
   constructor(private userService: UserService){
     this.user = this.userService.getUser();
-    this.galleryItems.set(this.userService.getGallery(this.user().userName));
   }
 
 
@@ -40,7 +90,7 @@ export class HomeComponent {
     })
   }
 
-  onDelete(id: string) {
+  onDelete(id: number) {
     Swal.fire({
       text: "¿Está seguro de eliminar la imagen seleccionada?",
       icon: "warning",
@@ -55,13 +105,12 @@ export class HomeComponent {
         this.galleryItems.update(items =>
           items.filter(item => item.id !== id)
         );
-        this.userService.updateGallery(this.user().userName, this.galleryItems());
       }
     });
 
   }
 
-  onAddComment(event:Event, id:string){
+  onAddComment(event:Event, id:number){
     const input = event.target as HTMLInputElement;
     if(!input.value){
       return;
@@ -73,7 +122,6 @@ export class HomeComponent {
       }
       return items;
     })
-    this.userService.updateGallery(this.user().userName, this.galleryItems());
     input.value = '';
   }
 

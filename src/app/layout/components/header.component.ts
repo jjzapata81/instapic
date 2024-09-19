@@ -1,6 +1,5 @@
 import { Component} from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { UserService } from '../../auth/services/user.service';
 
 @Component({
   selector: 'app-header',
@@ -11,15 +10,12 @@ import { UserService } from '../../auth/services/user.service';
 })
 export class HeaderComponent {
 
-  user;
-  constructor(private router:Router, private userService:UserService){
-    this.user = userService.getUser();
+
+  constructor(private router:Router){
   }
 
 
   logout(){
-    this.userService.logout();
-    this.user = this.userService.getUser();
     this.router.navigateByUrl('');
   }
 
