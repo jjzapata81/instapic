@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { User } from '../interfaces/user.interface';
 import { LoginResponse, SignUpResponse } from '../interfaces/login-response.interface';
 import { GalleryItem } from '../../features/home/interfaces/gallery-item.interface';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, Observable, tap } from 'rxjs';
 import { UserResponse } from '../interfaces/user-response.interface';
 
@@ -38,11 +38,19 @@ export class UserService {
   }
 
   saveImage(id:string, url:string, username:string){
+    const token = sessionStorage.getItem('token') || '';
+    const headers:HttpHeaders = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
     const newImage:GalleryItem = {
       id,
       url,
       comments:[]
     }
+    this.http.post('http://localhost:3000/api/posts', newImage, {headers}).pipe(
+      tap(response=>console.log(response))
+    ).subscribe(response=>console.log(response));
+
     let galleryStr = localStorage.getItem(`imgs-${username}`);
     if(galleryStr){
       let gallery = JSON.parse(galleryStr);
@@ -53,12 +61,31 @@ export class UserService {
     }
   }
 
-  getGallery(username:string):GalleryItem[]{
-    let galleryStr = localStorage.getItem(`imgs-${username}`);
-    if(galleryStr){
-      return JSON.parse(galleryStr);
+  getGallery():Observable<GalleryItem[]>{
+    const token = sessionStorage.getItem('token') || '';
+    const headers:HttpHeaders = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    return this.http.get<GalleryItem[]>('http://localhost:3000/api/posts/user/id', {headers});
+  }
+
+  addComment(postId:string, comment:string):Observable<GalleryItem[]>{
+    const token = sessionStorage.getItem('token') || '';
+    const headers:HttpHeaders = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    const body = {
+      postId, comment
     }
-    return [];
+    return this.http.post<GalleryItem[]>('http://localhost:3000/api/posts/add/comment', body, {headers});
+  }
+
+  delete(postId:string):Observable<GalleryItem[]>{
+    const token = sessionStorage.getItem('token') || '';
+    const headers:HttpHeaders = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    return this.http.delete<GalleryItem[]>(`http://localhost:3000/api/posts/${postId}`, {headers});
   }
 
   updateGallery(username:string, gallery:GalleryItem[]){

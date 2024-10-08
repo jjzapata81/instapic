@@ -21,17 +21,16 @@ export class HomeComponent {
 
   constructor(private userService: UserService){
     this.user = this.userService.getUser();
-    this.galleryItems.set(this.userService.getGallery(this.user().username));
+    this.userService.getGallery().subscribe(this.galleryItems.set);
   }
 
 
-  onComment(comments: string[]) {
-
+  onComment(comments: any[]) {
     let htmlContent = 'Aún no hay comentarios, se el primero!';
     if(comments.length>0){
       htmlContent = '<div>';
       comments.forEach(comment => {
-        htmlContent += `<p>${comment}</p>`;
+        htmlContent += `<p>${comment.comment}</p>`;
       });
       htmlContent += '</div>';
     }
@@ -52,10 +51,7 @@ export class HomeComponent {
       cancelButtonText:"No"
     }).then((result) => {
       if (result.isConfirmed) {
-        this.galleryItems.update(items =>
-          items.filter(item => item.id !== id)
-        );
-        this.userService.updateGallery(this.user().username, this.galleryItems());
+        this.userService.delete(id).subscribe(this.galleryItems.set);
       }
     });
 
@@ -66,14 +62,7 @@ export class HomeComponent {
     if(!input.value){
       return;
     }
-    this.galleryItems.update(items=> {
-      let selected = items.find(item=>item.id===id);
-      if(selected){
-        selected.comments = [...selected.comments, input.value]
-      }
-      return items;
-    })
-    this.userService.updateGallery(this.user().username, this.galleryItems());
+    this.userService.addComment(id, input.value).subscribe(this.galleryItems.set);
     input.value = '';
   }
 
