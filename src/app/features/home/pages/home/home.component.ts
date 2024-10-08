@@ -21,7 +21,7 @@ export class HomeComponent {
 
   constructor(private userService: UserService){
     this.user = this.userService.getUser();
-    this.galleryItems.set(this.userService.getGallery(this.user().userName));
+    this.galleryItems.set(this.userService.getGallery(this.user().username));
   }
 
 
@@ -55,7 +55,7 @@ export class HomeComponent {
         this.galleryItems.update(items =>
           items.filter(item => item.id !== id)
         );
-        this.userService.updateGallery(this.user().userName, this.galleryItems());
+        this.userService.updateGallery(this.user().username, this.galleryItems());
       }
     });
 
@@ -73,7 +73,7 @@ export class HomeComponent {
       }
       return items;
     })
-    this.userService.updateGallery(this.user().userName, this.galleryItems());
+    this.userService.updateGallery(this.user().username, this.galleryItems());
     input.value = '';
   }
 

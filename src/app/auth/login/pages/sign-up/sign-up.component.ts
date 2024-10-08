@@ -15,46 +15,45 @@ export class SignUpComponent {
 
   signUpForm = this.fb.group({
     email: [''],
-    userName:['', [Validators.required, Validators.minLength(8), Validators.maxLength(12)]],
-    password:['', [Validators.required]],
+    name: [''],
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required]],
     rePassword: ['']
   });
 
-  constructor(private fb: FormBuilder, private router: Router, private userService:UserService) {
+  constructor(private fb: FormBuilder, private router: Router, private userService: UserService) {
 
   }
 
   onResgister() {
     if (!this.signUpForm.valid) {
       Swal.fire({
-        text:'Debe diligenciar todos los campos',
-        icon:'error'
+        text: 'Debe diligenciar todos los campos',
+        icon: 'error'
       })
       return;
     }
-    let userName = this.signUpForm.value.userName || '';
+    let name = this.signUpForm.value.name || '';
+    let username = this.signUpForm.value.username || '';
     let email = this.signUpForm.value.email || '';
     let password = this.signUpForm.value.password || '';
     let rePassword = this.signUpForm.value.rePassword || '';
     if (rePassword !== password) {
       Swal.fire({
-        text:'Las constraseñas no coinciden',
-        icon:'error'
+        text: 'Las constraseñas no coinciden',
+        icon: 'error'
       })
       return;
     }
 
 
-    let response = this.userService.register({userName, password, email})
-    if(response.success){
-      this.router.navigateByUrl('/home');
-    }else{
-      Swal.fire({
-        text:response.message,
-        icon:'error'
+    this.userService.register({ username, password, email, name }).subscribe({
+      next: () => this.router.navigateByUrl('/home'),
+      error: error => Swal.fire({
+        text: error.error.message,
+        icon: 'error'
       })
-    }
-
+    })
   }
 
 }

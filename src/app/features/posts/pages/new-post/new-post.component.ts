@@ -38,9 +38,9 @@ export class NewPostComponent {
     }
     const file:File = inputFile.files[0];
     const fileName = uuidv4();
-    this.postsService.upload(file, fileName, this.user().userName).then(data=>{
+    this.postsService.upload(file, fileName, this.user().username).then(data=>{
       this.uploadedUrl = data!;
-      this.userService.saveImage(fileName, this.uploadedUrl, this.user().userName);
+      this.userService.saveImage(fileName, this.uploadedUrl, this.user().username);
       Swal.close();
       inputFile.value = '';
     }).catch(()=>{

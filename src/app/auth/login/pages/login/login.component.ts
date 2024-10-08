@@ -16,38 +16,40 @@ export class LoginComponent {
 
 
   loginForm = this.fb.group({
-    userName:['', [Validators.required, Validators.minLength(8), Validators.maxLength(12)]],
-    password:['', [Validators.required]]
+    userName: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(12)]],
+    password: ['', [Validators.required]]
   })
 
-  constructor(private fb:FormBuilder, private router: Router, private userService: UserService){
+  constructor(private fb: FormBuilder, private router: Router, private userService: UserService) {
 
   }
 
-  onLogin(){
+  onLogin() {
 
     console.log(this.loginForm);
     if (!this.loginForm.valid) {
       Swal.fire({
-        title:'Ingreso',
-        text:'Debe diligenciar todos los campos',
-        icon:'error'
+        title: 'Ingreso',
+        text: 'Debe diligenciar todos los campos',
+        icon: 'error'
       });
       return;
     }
-    let userName = this.loginForm.value.userName||'';
-    let password = this.loginForm.value.password||'';
-    let response = this.userService.login(userName, password);
-    if(response.success){
-      this.router.navigateByUrl('/home');
-    }else{
-      Swal.fire({
-        title:'Ingreso',
-        text:response.message,
-        icon:'error'
-      });
-    }
+    let userName = this.loginForm.value.userName || '';
+    let password = this.loginForm.value.password || '';
 
+    this.userService.login(userName, password).subscribe({
+      next: () => {
+        this.router.navigateByUrl('/home');
+      },
+      error: error => {
+        Swal.fire({
+          title: 'Ingreso',
+          text: error.error.message,
+          icon: 'error'
+        });
+      }
+    });
   }
 
 }

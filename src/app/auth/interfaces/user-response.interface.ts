@@ -1,7 +1,7 @@
-export interface User{
+export interface UserResponse{
   username:string;
   name?:string;
   profileImage?:string;
-  password?:string;
+  token:string;
   email?:string;
 }
