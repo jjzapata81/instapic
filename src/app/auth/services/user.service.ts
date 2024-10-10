@@ -37,59 +37,32 @@ export class UserService {
     this.userSignal.set({username:'', password:'', email:''});
   }
 
-  saveImage(id:string, url:string, username:string){
-    const token = sessionStorage.getItem('token') || '';
-    const headers:HttpHeaders = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
+  saveImage(id:string, url:string, userName:string){
     const newImage:GalleryItem = {
       id,
       url,
       comments:[]
     }
-    this.http.post('http://localhost:3000/api/posts', newImage, {headers}).pipe(
-      tap(response=>console.log(response))
-    ).subscribe(response=>console.log(response));
-
-    let galleryStr = localStorage.getItem(`imgs-${username}`);
+    let galleryStr = localStorage.getItem(`imgs-${userName}`);
     if(galleryStr){
       let gallery = JSON.parse(galleryStr);
       gallery = [...gallery, newImage];
-      localStorage.setItem(`imgs-${username}`, JSON.stringify(gallery));
+      localStorage.setItem(`imgs-${userName}`, JSON.stringify(gallery));
     }else{
-      localStorage.setItem(`imgs-${username}`,JSON.stringify([newImage]));
+      localStorage.setItem(`imgs-${userName}`,JSON.stringify([newImage]));
     }
   }
 
-  getGallery():Observable<GalleryItem[]>{
-    const token = sessionStorage.getItem('token') || '';
-    const headers:HttpHeaders = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    return this.http.get<GalleryItem[]>('http://localhost:3000/api/posts/user/id', {headers});
-  }
-
-  addComment(postId:string, comment:string):Observable<GalleryItem[]>{
-    const token = sessionStorage.getItem('token') || '';
-    const headers:HttpHeaders = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    const body = {
-      postId, comment
+  getGallery(userName:string):GalleryItem[]{
+    let galleryStr = localStorage.getItem(`imgs-${userName}`);
+    if(galleryStr){
+      return JSON.parse(galleryStr);
     }
-    return this.http.post<GalleryItem[]>('http://localhost:3000/api/posts/add/comment', body, {headers});
+    return [];
   }
 
-  delete(postId:string):Observable<GalleryItem[]>{
-    const token = sessionStorage.getItem('token') || '';
-    const headers:HttpHeaders = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    return this.http.delete<GalleryItem[]>(`http://localhost:3000/api/posts/${postId}`, {headers});
-  }
-
-  updateGallery(username:string, gallery:GalleryItem[]){
-    localStorage.setItem(`imgs-${username}`, JSON.stringify(gallery));
+  updateGallery(userName:string, gallery:GalleryItem[]){
+    localStorage.setItem(`imgs-${userName}`, JSON.stringify(gallery));
   }
 
   register(user:User): Observable<SignUpResponse>{
